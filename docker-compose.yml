@@ -1,0 +1,13 @@
+services:
+  backend:
+    build: .
+    ports:
+      - 8001:8001
+      - 9229:9229 # for debugging
+    environment:
+      PORT: 8001
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/.pnpm-store
+      - /usr/src/app/node_modules
+    command: pnpm start:docker

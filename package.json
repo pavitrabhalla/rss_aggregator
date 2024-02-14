@@ -9,7 +9,7 @@
     "start": "node dist/src/index.js",
     "db:migrate": "prisma migrate dev",
     "rebuild:be": "docker compose build backend && docker compose rm --force --stop backend && docker compose up -d backend",
-    "seed:dev": "docker compose run backend pnpm ts-node scripts/seed.ts",
+    "db:seed": "docker compose run backend pnpm ts-node scripts/seed.ts",
     "start:prod": "node --inspect=0.0.0.0 dist/src/index.js",
     "start:docker": "pnpm build && pnpm start:prod",
     "watch": "watchy --no-init-spawn --debounce 1 -w src -- docker compose restart backend"

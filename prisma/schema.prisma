@@ -1,0 +1,37 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Feed {
+  feedId      String    @id @default(uuid())
+  title       String?
+  description String?
+  link        String    @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  Episode     Episode[]
+
+  @@map("feeds")
+}
+
+model Episode {
+  episodeId   String   @id @default(uuid())
+  feed        Feed     @relation(fields: [feedId], references: [feedId])
+  feedId      String
+  title       String   @unique
+  link        String?   @unique
+  description String?
+  publishedAt DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("episodes")
+}

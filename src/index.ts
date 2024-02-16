@@ -1,6 +1,7 @@
 import express from 'express';
-import { getLatestEpisode, refreshEpisodeData, getTotalEpisodeCount } from './handlers/episodesHandler';
+import { refreshEpisodeData } from './server/jobs/refreshEpisodes';
 import { CronJob } from 'cron';
+import { getLatestEpisode, getTotalEpisodeCount } from "./server/api/episodes";
 
 const cronJob = new CronJob('* * * * *', async () => {
     try {

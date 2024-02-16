@@ -1,32 +1,9 @@
-import db from "../modules/db";
+import db from "../../modules/db";
 import Parser from "rss-parser";
-import type { Feed } from '@prisma/client';
-import type { Episode } from '@prisma/client';
+import type {Episode, Feed} from '@prisma/client';
 
 const parser: Parser<Feed, Episode> = new Parser();
 
-const getLatestEpisode = () => {
-    return db.episode.findMany({
-        orderBy: {
-            pubDate: 'desc'
-        },
-        take: 1,
-        select: {
-            title: true,
-            link: true,
-            pubDate: true,
-            description: true,
-            feed: {
-                select: {
-                    title: true
-                }
-            }
-        }
-    });
-}
-const getTotalEpisodeCount = async () => {
-    return db.episode.count();
-}
 const getFeeds = async () => {
     return db.feed.findMany();
 }
@@ -60,6 +37,8 @@ const updateEpisodes = async (episodes: Parser.Output<Episode>, feed: Feed) => {
         if (!exists) {
             await addEpisodeToDb(episode, feed)
         } else {
+            // return if we have found an episode in this feed that already exists in the database
+            // this is assuming that RSS feed items are always ordered in reverse chronological order
             return;
         }
     }
@@ -74,7 +53,5 @@ const refreshEpisodeData = async () => {
 }
 
 export {
-    getLatestEpisode,
-    refreshEpisodeData,
-    getTotalEpisodeCount
-}
+    refreshEpisodeData
+};

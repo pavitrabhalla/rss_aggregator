@@ -5,7 +5,6 @@ import type { Episode } from '@prisma/client';
 
 const parser: Parser<Feed, Episode> = new Parser();
 
-// const parser = new Parser();
 const getLatestEpisode = () => {
     return db.episode.findMany({
         orderBy: {

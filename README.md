@@ -1,14 +1,18 @@
 # RSS Aggregator
 
-This service scrapes a given set of podcast RSS feeds and stores the episode data in a Postgres database.
+This service scrapes a given set of podcast RSS feeds and stores the scraped episode data in a Postgres database.
 
 ## Stack
 **NodeJS** app with an **Express** server written in **Typescript**, using a **Postgres** database. All components are setup to run with **Docker**.
 
 I use `pnpm` to manage packages
+
 `swc` to transpile Typescript to Javascript
+
 `prisma` for orm
+
 `rss-parser` to parse rss feeds
+
 `cron` to run cron jobs
 
 ## Local environment setup
@@ -20,7 +24,7 @@ I use `pnpm` to manage packages
 https://docs.docker.com/desktop/install/mac-install/
 
 ### Build docker containers
-- `docker compose build`
+`docker compose build`
 
 ### Run the app
 `docker compose up`
@@ -55,7 +59,7 @@ HAVING COUNT(DISTINCT title) > 1;
 ```
 
 ## Potential Code Improvements
-- Didn't follow TDD, could have written tests for the code
+- Didn't do TDD, could have written tests for the code
 - Could add more acceptance tests
 - Assumed that the episodes will always have the required fields in the RSS feed, could add more error handling around that
 - Could add more error handling around the database queries

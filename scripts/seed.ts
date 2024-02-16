@@ -1,6 +1,6 @@
 import db from "../src/modules/db";
+
 const run = async () => {
-    // @ts-ignore
     await db.feed.createMany({
         data: [
             {

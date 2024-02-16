@@ -24,14 +24,14 @@ model Feed {
 
 model Episode {
   episodeId   String   @id @default(uuid()) @map("episode_id")
-  feed        Feed     @relation(fields: [feedId], references: [feedId])
-  feedId      String   @map("feed_id")
+  feed        Feed?     @relation(fields: [feedId], references: [feedId])
+  feedId      String?   @map("feed_id")
   title       String
   link        String?
   description String?
-  publishedAt DateTime @map("published_at")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  pubDate     DateTime @map("published_at")
+  createdAt   DateTime? @default(now()) @map("created_at")
+  updatedAt   DateTime? @updatedAt @map("updated_at")
 
   @@unique(name: "unique_feed_title_link", fields: [feedId, title, link])
   @@map("episodes")

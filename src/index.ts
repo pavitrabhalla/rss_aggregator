@@ -1,79 +1,27 @@
 import express from 'express';
-import db from "./modules/db";
-import Parser from "rss-parser";
+import { getLatestEpisode, refreshEpisodeData, getTotalEpisodeCount } from './handlers/episodesHandler';
 import { CronJob } from 'cron';
-
-const parser = new Parser();
-async function getFeeds() {
-    return await db.feed.findMany();
-}
-
-async function updateEpisodes() {
-    const feeds = await getFeeds();
-    feeds.forEach((f) => {
-        parser.parseURL(f.link)
-            .then(feed => {
-                feed.items.forEach(async (item) => {
-                    db.episode.findFirst({
-                        where: {
-                            title: item.title,
-                            feedId: f.feedId
-                        }
-                    }).then(async (result) => {
-                        if (result === null) {
-                            console.log("Creating new episode: " + item.title);
-                            await db.episode.create({
-                                data: {
-                                    title: item.title ? item.title : '',
-                                    link: item.link,
-                                    publishedAt: item.pubDate ? new Date(item.pubDate) : new Date(),
-                                    description: item.description,
-                                    feedId: f.feedId
-                                }
-                            });
-                        } else return;
-                    });
-                });
-            });
-    });
-}
 
 const cronJob = new CronJob('* * * * *', async () => {
     try {
-        await updateEpisodes();
+        await refreshEpisodeData();
     } catch (e) {
         console.error(e);
     }
 });
-
 cronJob.start();
 
 const app = express();
-
-function getLatestEpisode() {
-    return db.episode.findMany({
-        orderBy: {
-            publishedAt: 'desc'
-        },
-        take: 1,
-        select: {
-            title: true,
-            link: true,
-            publishedAt: true,
-            description: true,
-            feed: {
-                select: {
-                    title: true
-                }
-            }
-        }
-    });
+type apiResponse = {
+    episodeCount: number;
+    latestEpisode: any;
 }
 app.set('json spaces', 4);
 
-app.get('/', async(req, res) => {
+app.get('/', async(_: any, res: { json: (arg0: apiResponse ) => void; }) => {
     const latest = await getLatestEpisode();
-    res.json({ "latestEpisode": latest });
+    const count = await getTotalEpisodeCount();
+    res.json({ "episodeCount": count, "latestEpisode": latest });
 });
 
 const port = Number(process.env.PORT) || 8080;
